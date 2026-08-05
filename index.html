@@ -1,178 +1,128 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>不做产品，只做 Token 中转——卖 Token 到底怎么赚钱</title>
-  <meta name="description" content="AI 时代最被低估的中间商生意：不训练模型、不做应用，只把 Token 转一手，一年就能经手上亿美金。拆解 OpenRouter、国内中转站与 One-API 的真实玩法。">
-  <!-- Product Hunt / 社交分享卡片 -->
-  <meta property="og:title" content="不做产品，只做 Token 中转——卖 Token 到底怎么赚钱">
-  <meta property="og:description" content="AI 时代最被低估的中间商生意：不训练模型、不做应用，只转一手 Token，一年经手上亿美金。">
-  <meta property="og:type" content="article">
+  <title>Don't Build Products, Resell AI Tokens — A Field Guide to the $100M Token Relay Economy</title>
+  <meta name="description" content="A no-fluff field guide to the AI token resale economy — how OpenRouter, Chinese API gateways, and One-API actually make money, and the traps that sink most middlemen.">
+  <!-- Product Hunt / social share card -->
+  <meta property="og:title" content="Don't Build Products, Resell AI Tokens">
+  <meta property="og:description" content="A field guide to the quiet $100M+ AI token relay economy — how OpenRouter, Chinese API gateways, and One-API actually make money.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://majia1fan.github.io/ai-token-relay/">
   <meta property="og:image" content="https://majia1fan.github.io/ai-token-relay/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Don't Build Products, Resell AI Tokens">
+  <meta name="twitter:description" content="A field guide to the quiet $100M+ AI token relay economy.">
+  <meta name="twitter:image" content="https://majia1fan.github.io/ai-token-relay/og-image.png">
   <style>
     :root{
-      --bg:#0f1117; --card:#171a23; --card2:#1e222e; --text:#e8eaed; --muted:#9aa0ac;
-      --accent:#ff6154; --accent2:#ffb454; --green:#10b981; --blue:#5b9dff; --line:#2a2f3a;
+      --bg:#0d0d0f; --card:#16161a; --card2:#1d1d22; --text:#f2f2f3; --muted:#9aa0ac;
+      --accent:#ff6b35; --accent2:#00d4aa; --line:#26262e;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
       background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
-    a{color:var(--blue);text-decoration:none}
-    .wrap{max-width:820px;margin:0 auto;padding:0 20px}
-    header{padding:72px 0 40px;text-align:center;
-      background:radial-gradient(1200px 400px at 50% -10%,rgba(255,97,84,.18),transparent)}
-    .badge{display:inline-block;font-size:.78rem;color:var(--accent);border:1px solid rgba(255,97,84,.4);
-      padding:.25rem .8rem;border-radius:999px;margin-bottom:18px;letter-spacing:.04em}
-    h1{font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.3;margin-bottom:16px}
-    .sub{color:var(--muted);font-size:1.05rem;max-width:640px;margin:0 auto}
-    .ph-btn{display:inline-block;margin-top:26px;background:var(--accent);color:#fff;font-weight:700;
-      padding:.8rem 1.6rem;border-radius:10px;font-size:1rem;transition:.2s}
-    .ph-btn:hover{background:#ff4f42;transform:translateY(-1px)}
-    section{padding:44px 0;border-top:1px solid var(--line)}
-    h2{font-size:1.5rem;margin-bottom:8px}
-    h2 .num{color:var(--accent);font-weight:800;margin-right:.5rem}
-    .lead{color:var(--muted);margin-bottom:22px}
-    .grid{display:grid;gap:14px}
-    .grid.c2{grid-template-columns:1fr 1fr}
-    .grid.c3{grid-template-columns:repeat(3,1fr)}
-    @media(max-width:680px){.grid.c2,.grid.c3{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
-    .card h3{font-size:1.05rem;margin-bottom:8px;display:flex;align-items:center;gap:.5rem}
-    .card p{color:var(--muted);font-size:.95rem}
-    .tag{font-size:.72rem;padding:.15rem .55rem;border-radius:6px;background:var(--card2);color:var(--accent2)}
-    .case{border-left:3px solid var(--accent)}
-    .stat{display:flex;gap:22px;flex-wrap:wrap;margin:16px 0}
-    .stat .b{font-size:1.6rem;font-weight:800;color:var(--accent2)}
-    .stat .l{font-size:.8rem;color:var(--muted);display:block}
-    .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-    .pill{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:.4rem .7rem;font-size:.85rem}
-    ul.clean{list-style:none}
-    ul.clean li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
-    ul.clean li:last-child{border:none}
-    .dot{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
-      display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;margin-top:2px}
-    .warn{background:rgba(255,97,84,.08);border:1px solid rgba(255,97,84,.3);border-radius:14px;padding:22px}
-    .warn h3{color:var(--accent);margin-bottom:12px}
-    .quote{font-size:1.15rem;color:var(--text);border-left:3px solid var(--green);padding-left:16px;margin:8px 0;font-style:italic}
-    footer{padding:40px 0 60px;text-align:center;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
-    .og-note{font-size:.8rem;color:var(--muted);margin-top:10px}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:880px;margin:0 auto;padding:0 22px}
+    header{padding:80px 0 46px;text-align:center;
+      background:radial-gradient(1100px 420px at 50% -8%,rgba(255,107,53,.16),transparent)}
+    .tag{display:inline-block;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--accent);border:1px solid rgba(255,107,53,.4);padding:.3rem .85rem;border-radius:999px;margin-bottom:22px}
+    h1{font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.2;font-weight:800;letter-spacing:-.01em;margin-bottom:18px}
+    h1 .hi{color:var(--accent)}
+    .sub{color:var(--muted);font-size:1.1rem;max-width:620px;margin:0 auto}
+    .cta{display:inline-flex;align-items:center;gap:.5rem;margin-top:30px;background:var(--accent);color:#fff;
+      font-weight:700;font-size:1rem;padding:.85rem 1.6rem;border-radius:12px;transition:transform .15s ease,background .15s ease}
+    .cta:hover{transform:translateY(-2px);background:#ff7d4f}
+    .cta.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+    .cta.ghost:hover{background:var(--card)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:64px 0 8px}
+    .stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 18px;text-align:center}
+    .stat .big{font-size:1.9rem;font-weight:800;color:var(--accent2);line-height:1.1}
+    .stat .lbl{color:var(--muted);font-size:.86rem;margin-top:8px}
+    section{padding:64px 0;border-top:1px solid var(--line)}
+    .sec-head{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+    h2{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:800;letter-spacing:-.01em;margin-bottom:14px}
+    .sec-sub{color:var(--muted);max-width:640px;margin-bottom:38px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px}
+    .card h3{font-size:1.18rem;margin-bottom:10px;display:flex;align-items:center;gap:.6rem}
+    .card .num{color:var(--accent);font-weight:800;font-size:1.05rem}
+    .card p{color:var(--muted);font-size:.96rem}
+    .trap{border-left:3px solid #ff4d4d;background:var(--card);border-radius:0 12px 12px 0;padding:22px 24px;margin-bottom:16px}
+    .trap h3{font-size:1.1rem;margin-bottom:6px}
+    .trap p{color:var(--muted);font-size:.95rem}
+    .note{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:30px}
+    .note p{color:var(--muted);margin-bottom:10px}
+    .note strong{color:var(--text)}
+    footer{padding:50px 0 70px;text-align:center;color:var(--muted);font-size:.86rem;border-top:1px solid var(--line)}
+    @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-
-<header>
-  <div class="wrap">
-    <div class="badge">AI 生意拆解 · 第 4 篇</div>
-    <h1>不做产品，只做 Token 中转<br>——卖 Token 到底怎么赚钱</h1>
-    <p class="sub">AI 时代最被低估的「中间商」生意：不训练模型、不做应用，只把 Token 转一手，一年就能经手上亿美金。</p>
-    <a class="ph-btn" href="https://www.producthunt.com/" target="_blank" rel="noopener">🔥 在 Product Hunt 上支持</a>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <!-- 一 -->
-  <section>
-    <h2><span class="num">01</span>为什么有人愿意找中间商买</h2>
-    <p class="lead">Token 就是 AI 的流量。你发一句话给 ChatGPT，它回一段话，这一来一去消耗的就是 Token，跟手机流量一样，用多少付多少。</p>
-    <p class="lead">问题来了：Claude、GPT、Gemini 官方都卖 Token，为什么还有人找中间商？因为官方直购有四个麻烦——</p>
-    <div class="grid c2">
-      <div class="card"><h3>💳 付款难</h3><p>海外 AI 的 API 大多只收外币信用卡，很多人根本没有。中转站支持微信、支付宝，人民币直充。</p></div>
-      <div class="card"><h3>🧩 接口乱</h3><p>Claude 一个接口、GPT 一个、Gemini 又一个，同时用三家得写三份代码。中转站统一成一个接口，不改代码。</p></div>
-      <div class="card"><h3>📡 不稳定</h3><p>官方偶尔风控、限流、维护，你这边就断了。好的中转站挂多条线路，一条挂了自动切另一条，你无感知。</p></div>
-      <div class="card"><h3>🔒 最疼的是封号</h3><p>Anthropic 对不支持地区有明确限制，社区里因 IP、支付方式被封号的不在少数。中转站背后有一批 Key 轮换，封一个不影响整体。</p></div>
-    </div>
-    <p class="lead" style="margin-top:18px">顺带一提：Google Antigravity 是「官方正规军路线」（内置 Claude Opus 4，不担心封号），但 Github 上已有人导出其额度（opencode-antigravity-auth），<strong style="color:var(--accent)">已有用户因此被 Google 封号</strong>——风险自担。说到底用户要的不是神秘渠道，是省事、稳定、门槛低、不总担心被封。</p>
-  </section>
-
-  <!-- 二 -->
-  <section>
-    <h2><span class="num">02</span>卖 Token 到底怎么赚钱（三个真实案例）</h2>
-
-    <div class="card case" style="margin-bottom:14px">
-      <h3><span class="tag">案例 1</span> OpenRouter —— 抽 5% 的「高速收费站」</h3>
-      <p>前身是 OpenSea 联合创始人，NFT 凉了之后做这个。接口统一成一个入口，开发者接一次，哪个模型挂了自动切。赚钱方式一句话：你通过它调模型花了多少，它加 5%。</p>
-      <div class="stat">
-        <div><span class="b">$1亿+</span><span class="l">年经手调用费</span></div>
-        <div><span class="b">~$500万</span><span class="l">平台自己赚的</span></div>
-        <div><span class="b">$4000万</span><span class="l">a16z 投资</span></div>
-        <div><span class="b">$5亿</span><span class="l">估值</span></div>
+  <header>
+    <div class="wrap">
+      <span class="tag">Field Guide · Resources</span>
+      <h1>Don't Build Products,<br><span class="hi">Resell AI Tokens</span></h1>
+      <p class="sub">The most underestimated middleman business in the AI economy: no model training, no app — just move tokens from upstream APIs to users, and quietly handle hundreds of millions in volume.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="cta" href="https://www.producthunt.com/" target="_blank" rel="noopener">▲ View on Product Hunt</a>
+        <a class="cta ghost" href="#inside">Read the breakdown</a>
       </div>
-      <p class="lead" style="margin:0">本质不是卖 Claude 或 GPT，而是站在所有模型、所有用户中间赚那个「过路费」。只要大家还在用 AI，收费站就一直有车过。</p>
     </div>
+  </header>
 
-    <div class="card case" style="margin-bottom:14px">
-      <h3><span class="tag">案例 2</span> 国内中转站（以 vapi.cc / 星火 API 为样本）</h3>
-      <ul class="clean">
-        <li><span class="dot">1</span><div><strong>卖的不只是 Token。</strong>还接语音合成/转写、智能抠图、去水印、PDF 解析、OCR、网页爬虫——更像一个 AI 功能超市。</div></li>
-        <li><span class="dot">2</span><div><strong>瞄准 Claude Code 用户。</strong>卖点就是「Claude Code 接入说明」——教用户改一行环境变量接入。这类用户最头疼付不了款和被封。</div></li>
-        <li><span class="dot">3</span><div><strong>靠代理分销放大收入。</strong>兑换码（你招客户我给利润空间）+ 代理值（帮充 ChatGPT Plus 赚手续费）。</div></li>
-        <li><span class="dot">4</span><div><strong>底层是开源框架。</strong>页面标题写的就是「New API」——基于 One-API 二次开发的开源项目。</div></li>
-      </ul>
-      <p class="lead" style="margin-top:12px">低价 Token 是鱼饵，不是利润。<strong style="color:var(--accent2)">真正赚钱的是 Claude Code 代接入 + 多功能打包 + 代理分销。</strong></p>
-    </div>
-
-    <div class="card case">
-      <h3><span class="tag">案例 3</span> One-API —— 自己搭一个中转站？</h3>
-      <p>GitHub <strong>3 万+ star</strong>，最多人用的方案。把 Claude / GPT / Gemini 的 Key 填进去，自动统一成一个接口，自带负载均衡、计费、多号轮询；Docker 跑几行命令就能部署。</p>
-      <p class="lead" style="margin-top:12px">启动成本：</p>
-      <div class="pillrow">
-        <span class="pill">源码：免费（开源）</span>
-        <span class="pill">服务器：$200–500 / 月</span>
-        <span class="pill">API 额度：¥500–3000</span>
-        <span class="pill">域名杂费：¥200–1000</span>
-        <span class="pill" style="border-color:var(--accent);color:var(--accent)">合计约 ¥1000–5000</span>
-      </div>
-      <p class="lead" style="margin-top:12px">搭起来不难，获客和留存才是真问题。技术门槛已被开源压低，<strong style="color:var(--accent2)">真正的门槛是获客、信任、持续运营</strong>。</p>
-    </div>
-  </section>
-
-  <!-- 三 -->
-  <section>
-    <h2><span class="num">03</span>真有那么赚吗？</h2>
-    <p class="lead">别信「每月跑 1000 万 Token、加价 15%、月入 XX」的账——跑便宜模型和贵模型，收入能差十倍。更靠谱的看法是：你的平台一个月跑多少调用量，你从中赚了百分之多少。</p>
-    <div class="grid c2">
-      <div class="card"><h3>🪙 Token 差价</h3><p>上游 3–5%，中间商 30–50% 能赚，但容易被价格战打穿。</p></div>
-      <div class="card"><h3>🔁 订阅 / SaaS</h3><p>卖会员、卖配额、卖团队——比差价稳。</p></div>
-      <div class="card"><h3>🏢 企业服务</h3><p>私有部署、定制、出报表——单子大，但要投人力。</p></div>
-      <div class="card"><h3>📦 行业打包</h3><p>Agent + 知识库 + 自动化 一条龙，溢价最高。</p></div>
-    </div>
-  </section>
-
-  <!-- 四 -->
-  <section>
-    <h2><span class="num">04</span>别踩坑</h2>
-    <div class="warn">
-      <h3>⚠️ 三条红线</h3>
-      <ul class="clean">
-        <li><span class="dot" style="background:var(--accent2)">1</span><div><strong>单一上游风险。</strong>只有一条上游、一个收费渠道、没有监控告警，上游一出问题代理就瘫。</div></li>
-        <li><span class="dot" style="background:var(--accent2)">2</span><div><strong>别吹「比官方便宜」。</strong>模型厂商一直在降价，今天靠差价活，明天上游降一刀利润就没了。</div></li>
-        <li><span class="dot" style="background:var(--accent2)">3</span><div><strong>别搞灰产。</strong>能长久的都明说「我是中转服务，不是借官方 Key」。红线：封号、法律、纳税、平台合规。</div></li>
-      </ul>
-      <p class="lead" style="margin-top:14px">怎么稳？只用正规上游；跟用户说清自己只是中转；备多条线路；别一上来就收大钱。作为用户，你也可以用这些规则去筛选中转站。</p>
-    </div>
-  </section>
-
-  <!-- 写在最后 -->
-  <section>
-    <h2>写在最后</h2>
-    <p class="quote">OpenRouter 一年流水 1 亿美金，不是因为它卖 Token 便宜，而是它承接了几百个模型供应商的麻烦事，变成开发者只需买一次的简单事。</p>
-    <p class="quote">国内中转站能活，也不是因为它比官方便宜，而是因为很多人愿意为人民币支付、不用折腾、不被封号、出了问题有人响应工单。</p>
-    <p class="lead" style="margin-top:16px">AI 时代，<strong style="color:var(--accent2)">光倒 Token 赚不了大钱</strong>；但帮别人省去各种麻烦、让他们用上 AI，就能赚到钱。</p>
-    <a class="ph-btn" href="https://www.producthunt.com/" target="_blank" rel="noopener">🔥 在 Product Hunt 上支持这个拆解</a>
-  </section>
-
-</div>
-
-<footer>
   <div class="wrap">
-    原文：《不做产品，只做 Token 中转——卖 Token 到底怎么赚钱》· 作者 zn250t07 · 系列第 4 篇<br>
-    本页为 Product Hunt 发布配套的落地页 · 部署方式见说明
-    <p class="og-note">提示：把本页顶部 hero 区域导出为 1200×630 的 <code>og-image.png</code> 放在同目录，PH 分享卡片才会显示缩略图。</p>
+    <div class="stats">
+      <div class="stat"><div class="big">$100M+</div><div class="lbl">OpenRouter annual volume</div></div>
+      <div class="stat"><div class="big">30k+</div><div class="lbl">One-API GitHub stars</div></div>
+      <div class="stat"><div class="big">&lt;¥5,000</div><div class="lbl">To start your own relay</div></div>
+      <div class="stat"><div class="big">5%</div><div class="lbl">Typical take rate</div></div>
+    </div>
   </div>
-</footer>
 
+  <section id="inside">
+    <div class="wrap">
+      <div class="sec-head">How they actually make money</div>
+      <h2>4 Revenue Streams That Matter</h2>
+      <p class="sec-sub">No training. No app store. Just smart plumbing between API providers and end users.</p>
+      <div class="grid2">
+        <div class="card"><h3><span class="num">01</span> Token Spreads</h3><p>Buy wholesale API credits, sell retail. Volume is the moat — the more traffic you aggregate, the better your upstream rates.</p></div>
+        <div class="card"><h3><span class="num">02</span> SaaS Subscriptions</h3><p>Charge monthly for dashboards, API keys, usage analytics and team management on top of raw token access.</p></div>
+        <div class="card"><h3><span class="num">03</span> Enterprise Installs</h3><p>On-premise gateways for companies that can't route through public APIs due to compliance or latency.</p></div>
+        <div class="card"><h3><span class="num">04</span> Vertical Bundles</h3><p>Pre-built packages tuned for education, law, or customer service — the same token, packaged for a niche.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head">What sinks most of them</div>
+      <h2>3 Traps That Kill Token Relays</h2>
+      <p class="sec-sub">The business looks simple — until one of these breaks.</p>
+      <div class="trap"><h3>Single upstream dependency</h3><p>Lose your only API provider and you lose every customer overnight. Diversify or die.</p></div>
+      <div class="trap"><h3>"Cheaper than official" positioning</h3><p>A race to the bottom you can't win against OpenAI's balance sheet. Compete on reliability, not price.</p></div>
+      <div class="trap"><h3>Gray-market traffic</h3><p>Stolen keys and resold accounts end in chargebacks, bans, and frozen payouts.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head">About this guide</div>
+      <h2>A Map, Not a Pitch</h2>
+      <div class="note">
+        <p>This is a <strong>field guide</strong>, not a product. It documents a business model that's already happening — mostly in Chinese, mostly under the radar.</p>
+        <p>It walks through how <strong>OpenRouter</strong> runs ~$100M in volume on a thin 5% cut, why open-source gateways like <strong>One-API</strong> hit 30k+ stars with almost no marketing, and the four revenue streams plus three traps that define the space.</p>
+        <p>If you're building in AI infra or just curious where the money actually flows, this should save you a few months of digging.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>Part of a series on the AI token relay economy · Launched on Product Hunt</p>
+    </div>
+  </footer>
 </body>
 </html>
